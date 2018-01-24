@@ -1,10 +1,10 @@
 import Conversation from 'watson-developer-cloud/conversation/v1'
-import {promisify} from 'util'
+import Promise from 'bluebird'
 
 const state = {
-  userid: null,
+  username: null,
   password: null,
-  vesion: null,
+  version_date: null,
   conversation: null,
   workspaces: null,
   workspaceID: null,
@@ -12,52 +12,72 @@ const state = {
 }
 
 const mutations = {
-  setAuth (state, auth) {
-    state.userid = auth.userid
+  setAuth(state, auth) {
+    state.userid = auth.username
     state.password = auth.password
-    state.version = auth.version === undefined ? Conversation.VERSION_DATE_2017_05_26 : auth.version
-    state.isLogin = true
+    state.version = auth.version_date === null ? Conversation.VERSION_DATE_2017_05_26 : auth.version_date
   },
-  setWorkspaces (state, workspaces) {
+  setWorkspaces(state, workspaces) {
     state.workspaces = workspaces
   },
-  setWrokspaceID (state, workspaceID) {
+  setWorkspaceID(state, workspaceID) {
     state.workspaceID = workspaceID
   },
-  logoff (state) {
+  logoff(state) {
     state.userid = null
     state.password = null
     state.version = null
-    state.convesation = null
+    state.conversation = null
     state.isLogin = false
   },
-  initConversation (state) {
-    if (state.userid && state.password) {
-      state.conversation = new Conversation({
-        username: state.userid,
-        password: state.password,
-        version_date: state.version
-      })
-    }
+  setConversation(state) {
+    state.conversation = new Conversation({
+      username: state.userid,
+      password: state.password,
+      version_date: state.version
+    })
+  },
+  setLogin(state) {
+    state.isLogin = true
   }
 }
 
 const actions = {
-  getWorkspaces ({state, commit}) {
-    promisify(state.convesation.listWorkspaces)()
-      .then(response => { commit('setWorkspaces', response.workspaces) })
-      .catch(err => {
-        console.error(err)
-        commit('logoff')
-      })
+  // action to set auth parms to conversation object
+  initialize({
+    state,
+    commit
+  }, auth) {
+    return new Promise((resolve, reject) => {
+      commit('setAuth', auth)
+      if (state.userid != null && state.password != null && state.version != null) {
+        commit('setConversation')
+        resolve()
+      } else {
+        reject(new Error('username or password is missing'))
+      }
+    })
   },
-  login ({store, commit}, auth) {
-    commit('setAuth', auth)
-    setTimeout(commit('initConversation'), 50)
+  // action to get a list of workspaces in instance
+  getWorkspaces({
+    state,
+    commit
+  }) {
+    return new Promise(function (resolve, reject) {
+      state.conversation.listWorkspaces((err, response) => {
+        if (err) {
+          reject(err)
+        } else {
+          commit('setWorkspaces', response.workspaces)
+          resolve()
+        }
+      })
+    })
   }
 }
 
 export default {
+  namespaced: true,
   state,
   mutations,
   actions
