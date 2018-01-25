@@ -3,12 +3,7 @@
   <v-navigation-drawer clipped fixed v-model="drawer" app>
     <side-bar></side-bar>
   </v-navigation-drawer>
-  <v-toolbar app fixed clipped-left>
-    <div style="width:44px">
-      <v-toolbar-side-icon v-show="isLogin" @click.stop="drawer = !drawer"></v-toolbar-side-icon>
-    </div>
-    <v-toolbar-title>Watson Conversation Dialog Tester</v-toolbar-title>
-  </v-toolbar>
+  <app-header></app-header>
   <v-content>
     <v-container fluid fill-height>
       <router-view></router-view>
