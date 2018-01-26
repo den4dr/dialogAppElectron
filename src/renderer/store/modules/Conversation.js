@@ -73,6 +73,25 @@ const actions = {
         }
       })
     })
+  },
+  // action to send and recieve object to conversation
+  converse({state}, conversationRequest) {
+    return new Promise(function (resolve, reject) {
+      if (conversationRequest.text) {
+        state.conversation.message({
+          workspace_id: state.workspaceID,
+          input: conversationRequest
+        }, (err, response) => {
+          if (err) {
+            reject(err)
+          } else {
+            resolve(response)
+          }
+        })
+      } else {
+        reject(new Error('input text is missing or null'))
+      }
+    })
   }
 }
 
