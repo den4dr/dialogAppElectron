@@ -4,18 +4,19 @@
     <v-toolbar>
       <v-toolbar-title>Workspaces</v-toolbar-title>
     </v-toolbar>
+    <v-card-title>Please select a Workspace you'd like to test.</v-card-title>
     <v-layout row wrap>
       <v-flex xs4 v-for="workspace in workspaces" :key="workspace.workspace_id">
-        <v-card light height="198" class="workspace-card mt-1 mb-2 mr-1 ml-1">
+        <v-card light height="198" class="grey lighten-4 workspace-card mt-1 mb-2 mr-1 ml-1">
           <v-toolbar class="indigo workspace-header">
             <v-toolbar-title>
               <h6>{{workspace.name}}</h6>
             </v-toolbar-title>
           </v-toolbar>
           <v-card-title>
-            <span class="grey--text">Last Updated :&nbsp;</span>
+            <span class="grey--text text--darken-2">Last Updated :&nbsp;</span>
             <span>{{parseDate(workspace.updated)}}</span>
-            <span class="description-title grey--text">Description :</span>
+            <span class="description-title grey--text text--darken-2">Description :</span>
             <div class="description">{{workspace.description}}</div>
           </v-card-title>
           <v-card-actions class="workspace-card-btns">
@@ -44,7 +45,8 @@ export default {
     ]),
     ...mapState('Config', [
       'modal',
-      'dialog'
+      'dialog',
+      'testMode'
     ])
   },
   methods: {
@@ -62,6 +64,9 @@ export default {
         this.hideDialog()
       } else {
         this.hideModal()
+        this.$router.push({
+          name: this.testMode
+        })
       }
     },
     parseDate: function (time) {
