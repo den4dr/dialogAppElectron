@@ -86,19 +86,12 @@ export default {
     login(auth) {
       this.initialize(auth)
         .then(() => {
-          this.getWorkspaces()
-            .catch(err => {
-              this.logoff()
-              this.loginFailed = true
-              console.error(err)
-            })
-          return null
+          return this.getWorkspaces()
         })
         .then(() => {
           this.setLogin()
           this.showModal()
           this.loginFailed = false
-          return null
         })
         .catch(err => {
           this.logoff()
