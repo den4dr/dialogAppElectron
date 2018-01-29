@@ -32,7 +32,7 @@
         </v-card-text>
         <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn color="primary" @click="login(auth)">Login</v-btn>
+          <v-btn color="primary" @click.stop="login(auth)">Login</v-btn>
         </v-card-actions>
       </v-card>
     </v-flex>

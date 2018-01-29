@@ -10,8 +10,25 @@
         <v-list-tile-sub-title>{{item.modeSubTitle}}</v-list-tile-sub-title>
       </v-list-tile-content>
     </v-list-tile>
-    <v-divider></v-divider>
   </v-list>
+  <v-divider></v-divider>
+  <v-list dense>
+    <v-list-tile :disabled="!isLogin" @click.stop="showDialog">
+      <v-list-tile-avatar>
+        <v-icon>exit_to_app</v-icon>
+      </v-list-tile-avatar>
+      <v-list-tile-content>Change Workspace</v-list-tile-content>
+    </v-list-tile>
+    <v-list-tile :disabled="!isLogin" @click="logout">
+      <v-list-tile-avatar>
+        <v-icon>exit_to_app</v-icon>
+      </v-list-tile-avatar>
+      <v-list-tile-content>Logoff</v-list-tile-content>
+    </v-list-tile>
+  </v-list>
+  <v-dialog v-if="isLogin" v-model="dialog" max-width="810">
+    <workspace-modal></workspace-modal>
+  </v-dialog>
 </v-container>
 </template>
 
@@ -21,6 +38,8 @@ import {
   mapActions,
   mapMutations
 } from 'vuex'
+
+import workspaceModal from '@/components/WorkspaceModal'
 
 export default {
   data() {
@@ -47,24 +66,49 @@ export default {
       ]
     }
   },
+  components: {
+    'workspace-modal': workspaceModal
+  },
   computed: {
     ...mapState('Config', [
       'testMode'
-    ])
+    ]),
+    ...mapState('Conversation', [
+      'isLogin'
+    ]),
+    dialog: {
+      get: function () {
+        return this.$store.state.Config.dialog
+      },
+      set: function (newValue) {
+        this.setDialog(newValue)
+      }
+    }
   },
   methods: {
     ...mapActions('Config', [
       'changeTestMode'
     ]),
     ...mapMutations('Config', [
-      'hideDrawer'
+      'hideDrawer', 'showDialog', 'setDialog'
+    ]),
+    ...mapMutations('Conversation', [
+      'logoff'
     ]),
     selectMode: function (item) {
       this.changeTestMode(item.modeName)
-      this.$router.push({
-        name: item.modeName
-      })
       this.hideDrawer()
+      if (this.isLogin) {
+        this.$router.push({
+          name: item.modeName
+        })
+      }
+    },
+    logout: function () {
+      this.logoff()
+      this.$router.push({
+        name: 'login-page'
+      })
     }
   }
 }

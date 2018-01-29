@@ -8,7 +8,7 @@
     <v-layout row wrap>
       <v-flex xs4 v-for="workspace in workspaces" :key="workspace.workspace_id">
         <v-card light height="198" class="grey lighten-4 workspace-card mt-1 mb-2 mr-1 ml-1">
-          <v-toolbar class="indigo workspace-header">
+          <v-toolbar dense class="indigo">
             <v-toolbar-title>
               <h6>{{workspace.name}}</h6>
             </v-toolbar-title>
@@ -59,7 +59,6 @@ export default {
     ]),
     selectWorkspace: function (workspace) {
       this.setWorkspaceID(workspace.workspace_id)
-      console.log(this.dialog, this.modal)
       if (this.dialog) {
         this.hideDialog()
       } else {
