@@ -1,7 +1,8 @@
 const state = {
   drawer: false,
   modal: false,
-  dialog: false
+  dialog: false,
+  testMode: 'conversation-mode'
 }
 
 const mutations = {
@@ -31,11 +32,29 @@ const mutations = {
   },
   setDialog: function (state, status) {
     state.dialog = status
+  },
+  setTestMode: function (state, status) {
+    state.testMode = status
+  }
+}
+
+const actions = {
+  changeTestMode: function ({commit}, testMode) {
+    const modes = ['conversation-mode', 'intent-check-mode', 'dialog-test-mode']
+    return new Promise(function (resolve, reject) {
+      if (modes.indexOf(testMode) >= 0) {
+        commit('setTestMode', testMode)
+        resolve()
+      } else {
+        reject(new Error('Invalid name of test mode'))
+      }
+    })
   }
 }
 
 export default {
   namespaced: true,
   state,
-  mutations
+  mutations,
+  actions
 }
