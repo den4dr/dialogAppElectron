@@ -8,7 +8,8 @@ const state = {
   conversation: null,
   workspaces: null,
   workspaceID: null,
-  isLogin: false
+  isLogin: false,
+  converseHistory: []
 }
 
 const mutations = {
@@ -29,6 +30,7 @@ const mutations = {
     state.version = null
     state.conversation = null
     state.isLogin = false
+    state.converseHistory = []
   },
   setConversation(state) {
     state.conversation = new Conversation({
@@ -39,6 +41,13 @@ const mutations = {
   },
   setLogin(state) {
     state.isLogin = true
+  },
+  clearConverseHistory(state) {
+    state.converseHistory = []
+  },
+  appendConverseHistory(state, converseResponse) {
+    converseResponse.id = state.converseHistory.length
+    state.converseHistory.unshift(converseResponse)
   }
 }
 
@@ -75,13 +84,11 @@ const actions = {
     })
   },
   // action to send and recieve object to conversation
-  converse({state}, conversationRequest) {
+  getMessage({state}, conversationRequest) {
+    conversationRequest['workspace_id'] = state.workspaceID
     return new Promise(function (resolve, reject) {
-      if (conversationRequest.text) {
-        state.conversation.message({
-          workspace_id: state.workspaceID,
-          input: conversationRequest
-        }, (err, response) => {
+      if (conversationRequest.input.text) {
+        state.conversation.message(conversationRequest, (err, response) => {
           if (err) {
             reject(err)
           } else {
